@@ -1,12 +1,15 @@
-FROM python:3.9-slim
+FROM ubuntu
 
-WORKDIR /app
+RUN apt-get update
+RUN apt-get install -y curl
+RUN curl -sL https://deb.nodesource.com/setup_18.x | bash -
+RUN apt-get upgrade -y
+RUN apt-get install -y nodejs
 
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+COPY package.json package.json
+COPY package-lock.json package-lock.json
+COPY main.js main.js
 
-COPY . .
+RUN npm install
 
-EXPOSE 5000
-
-CMD ["python", "app.py"]
+ENTRYPOINT [ "node", "main.js" ]
